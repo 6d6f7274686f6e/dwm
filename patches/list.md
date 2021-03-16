@@ -1,8 +1,8 @@
 # Installed
  - xrdb
- - fullgaps
+ - ru gaps
 # Planning to install (maybe?)
  - fakefullscreen
- - ru gaps / useless gaps ?
 # Uninstalled
+ - fullgaps
  - tilegaps
