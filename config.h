@@ -72,7 +72,8 @@ static Key keys[] = {
 	{ MODKEY,                       XK_h,           setmfact,       {.f = -0.01} },
 	{ MODKEY,                       XK_l,           setmfact,       {.f = +0.01} },
 	{ MODKEY,                       XK_Return,      zoom,           {0} },
-	{ MODKEY,                       XK_Tab,         view,           {0} },
+	{ MODKEY,                       XK_Tab,         circularview,   {.i = +1} },
+	{ MODKEY|ShiftMask,             XK_Tab,         circularview,   {.i = -1} },
 	{ MODKEY|ShiftMask,             XK_c,           killclient,     {0} },
 	{ MODKEY,                       XK_t,           setlayout,      {.v = &layouts[0]} },
 	{ MODKEY,                       XK_f,           setlayout,      {.v = &layouts[1]} },
@@ -119,4 +120,6 @@ static Button buttons[] = {
 	{ ClkTagBar,            0,              Button3,        toggleview,     {0} },
 	{ ClkTagBar,            MODKEY,         Button1,        tag,            {0} },
 	{ ClkTagBar,            MODKEY,         Button3,        toggletag,      {0} },
+	{ ClkTagBar,            0,              Button4,        shiftview,      { .i = -1 } },
+	{ ClkTagBar,            0,              Button5,        shiftview,      { .i = +1 } },
 };
