@@ -169,7 +169,6 @@ static void attach(Client *c);
 static void attachstack(Client *c);
 static void buttonpress(XEvent *e);
 static void checkotherwm(void);
-static void circularview(const Arg *arg);
 static void cleanup(void);
 static void cleanupmon(Monitor *mon);
 static void clientmessage(XEvent *e);
@@ -517,37 +516,6 @@ checkotherwm(void)
 	XSync(dpy, False);
 }
 
-void
-circularview(const Arg *arg)
-{
-	Arg a;
-	Client *c;
-	unsigned visible = 0;
-	int i = arg->i;
-	int count = 0;
-	int nextseltags, curseltags = selmon->tagset[selmon->seltags];
-
-	do {
-		if(i > 0) // left circular shift
-			nextseltags = curseltags << i | (curseltags >> (LENGTH(tags) - i));
-
-		else // right circular shift
-			nextseltags = curseltags >> (- i) | (curseltags << (LENGTH(tags) + i));
-
-                // Check if tag is visible
-		for (c = selmon->clients; c && !visible; c = c->next)
-			if (nextseltags & c->tags) {
-				visible = 1;
-				break;
-			}
-		i += arg->i;
-	} while (!visible && ++count < 10);
-
-	if (count < 10) {
-		a.i = nextseltags;
-		view(&a);
-	}
-}
 void
 cleanup(void)
 {
@@ -1768,24 +1736,30 @@ shiftview(const Arg *arg)
 	Arg a;
 	Client *c;
 	unsigned visible = 0;
-	int i = arg->i;
+  int i = 1 - (2*(arg->ui & 1)); // first bit is increment tag yes/no (no = decrement)
 	int count = 0;
 	int nextseltags, curseltags = selmon->tagset[selmon->seltags];
 
 	do {
-		if(i > 0) // left circular shift
-			nextseltags = curseltags << i;
-
-		else // right circular shift
-			nextseltags = curseltags >> (- i);
-
-                // Check if tag is visible
+		if(i > 0) { // left circular shift
+      if(arg->ui & 2) // 2nd bit is circular yes/no
+			  nextseltags = (curseltags << i) | (curseltags >> (LENGTH(tags) - i));
+      else
+			  nextseltags = curseltags << i;
+    }
+		else { // right circular shift
+      if(arg->ui & 2)
+			  nextseltags = curseltags >> (-i) | (curseltags << (LENGTH(tags) + i));
+      else
+        nextseltags = curseltags >> (-i);
+    }
+    // Check if tag is visible
 		for (c = selmon->clients; c && !visible; c = c->next)
 			if (nextseltags & c->tags) {
 				visible = 1;
 				break;
 			}
-		i += arg->i;
+		i += 1 - 2*(arg->ui & 1);
 	} while (!visible && ++count < 10);
 
 	if (count < 10) {
