@@ -18,7 +18,6 @@ static char *colors[][3] = {
        /*               fg           bg           border   */
        [SchemeNorm] = { normfgcolor, normbgcolor,     normbordercolor },
        [SchemeSel]  = { selfgcolor,  selbgcolor,      selbordercolor  },
-     	 [SchemeHid]  = { normfgcolor, normbordercolor, normbordercolor  },
 };
 
 /* tagging */
@@ -66,10 +65,8 @@ static Key keys[] = {
 	{ MODKEY,                       XK_p,           spawn,          {.v = dmenucmd } },
 	{ MODKEY|ShiftMask,             XK_Return,      spawn,          {.v = termcmd } },
 	{ MODKEY,                       XK_b,           togglebar,      {0} },
- 	{ MODKEY,                       XK_j,           focusstackvis,  {.i = +1 } },
- 	{ MODKEY,                       XK_k,           focusstackvis,  {.i = -1 } },
- 	{ MODKEY|ShiftMask,             XK_j,           focusstackhid,  {.i = +1 } },
- 	{ MODKEY|ShiftMask,             XK_k,           focusstackhid,  {.i = -1 } },
+ 	{ MODKEY,                       XK_j,           focusstack,     {.i = +1 } },
+ 	{ MODKEY,                       XK_k,           focusstack,     {.i = -1 } },
 	{ MODKEY,                       XK_i,           incnmaster,     {.i = +1 } },
 	{ MODKEY,                       XK_d,           incnmaster,     {.i = -1 } },
 	{ MODKEY,                       XK_h,           setmfact,       {.f = -0.01} },
@@ -92,8 +89,6 @@ static Key keys[] = {
  	{ MODKEY,                       XK_KP_Subtract, setgaps,        {.i = -5 } },
  	{ MODKEY,                       XK_KP_Add,      setgaps,        {.i = +5 } },
  	{ MODKEY|ShiftMask,             XK_equal,       setgaps,        {.i = 0  } },
- 	{ MODKEY,                       XK_s,           show,           {0} },
- 	{ MODKEY,                       XK_h,           hide,           {0} },
 	TAGKEYS(                        XK_ampersand,                   0)
 	TAGKEYS(                        XK_eacute,                      1)
 	TAGKEYS(                        XK_quotedbl,                    2)
@@ -113,6 +108,8 @@ static Button buttons[] = {
 	{ ClkLtSymbol,          0,              Button1,        setlayout,      {0} },
 	{ ClkLtSymbol,          0,              Button3,        setlayout,      {.v = &layouts[2]} },
 	{ ClkWinTitle,          0,              Button1,        togglewin,      {0} },
+ 	{ ClkWinTitle,          0,              Button5,        focusstack,     {.i = +1 } },
+ 	{ ClkWinTitle,          0,              Button4,        focusstack,     {.i = -1 } },
 	{ ClkWinTitle,          0,              Button2,        zoom,           {0} },
 	{ ClkStatusText,        0,              Button2,        spawn,          {.v = termcmd } },
 	{ ClkClientWin,         MODKEY,         Button1,        movemouse,      {0} },
@@ -123,4 +120,3 @@ static Button buttons[] = {
 	{ ClkTagBar,            MODKEY,         Button1,        tag,            {0} },
 	{ ClkTagBar,            MODKEY,         Button3,        toggletag,      {0} },
 };
-
