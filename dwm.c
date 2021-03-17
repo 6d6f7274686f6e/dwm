@@ -1737,19 +1737,19 @@ shiftview(const Arg *arg)
 	Arg a;
 	Client *c;
 	unsigned visible = 0;
-  int i = 1 - (2*(arg->ui & 1)); // first bit is increment tag yes/no (no = decrement)
+  int i = 1 - (arg->i & 2); // 2nd bit is increment tag yes/no (no = decrement)
 	int count = 0;
 	int nextseltags, curseltags = selmon->tagset[selmon->seltags];
 
 	do {
 		if(i > 0) { // left circular shift
-      if(arg->ui & 2) // 2nd bit is circular yes/no
+      if(arg->i & 4) // 3rd bit is circular yes/no
 			  nextseltags = (curseltags << i) | (curseltags >> (LENGTH(tags) - i));
       else
 			  nextseltags = curseltags << i;
     }
 		else { // right circular shift
-      if(arg->ui & 2)
+      if(arg->i & 4)
 			  nextseltags = curseltags >> (-i) | (curseltags << (LENGTH(tags) + i));
       else
         nextseltags = curseltags >> (-i);
@@ -1760,7 +1760,7 @@ shiftview(const Arg *arg)
 				visible = 1;
 				break;
 			}
-		i += 1 - 2*(arg->ui & 1);
+		i += 1 - (arg->i & 2);
 	} while (!visible && ++count < 10);
 
 	if (count < 10) {
