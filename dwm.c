@@ -75,7 +75,7 @@
 
 /* enums */
 enum { CurNormal, CurResize, CurMove, CurLast }; /* cursor */
-enum { SchemeNorm, SchemeSel }; /* color schemes */
+enum { SchemeNorm, SchemeSel, SchemeStackNorm, SchemeStackSel }; /* color schemes */
 enum { NetSupported, NetWMName, NetWMState, NetWMCheck,
        NetWMFullscreen, NetActiveWindow, NetWMWindowType,
        NetWMWindowTypeDialog, NetClientList, NetLast }; /* EWMH atoms */
@@ -791,9 +791,9 @@ drawbar(Monitor *m)
  				if (!ISVISIBLE(c))
  					continue;
  				if (m->sel == c)
- 					scm = SchemeSel;
+ 					scm = SchemeStackSel;
  				else
- 					scm = SchemeNorm;
+ 					scm = SchemeStackNorm;
  				drw_setscheme(drw, scheme[scm]);
  
  				if (remainder >= 0) {
