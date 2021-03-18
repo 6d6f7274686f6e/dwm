@@ -83,6 +83,12 @@ enum { WMProtocols, WMDelete, WMState, WMTakeFocus, WMLast }; /* default atoms *
 enum { ClkTagBar, ClkLtSymbol, ClkStatusText, ClkWinTitle,
        ClkClientWin, ClkRootWin, ClkLast }; /* clicks */
 
+// shiftview 
+#define ShiftLeft  (1 << 1)
+#define ShiftRight 1
+#define ShiftCycle (1 << 2)
+#define ShiftNoCycle 1
+
 typedef union {
 	int i;
 	unsigned int ui;
@@ -1736,19 +1742,26 @@ shiftview(const Arg *arg)
 	Arg a;
 	Client *c;
 	unsigned visible = 0;
-  int i = 1 - (arg->i & 2); // 2nd bit is increment tag yes/no (no = decrement)
+  int i, step;
 	int count = 0;
 	int nextseltags, curseltags = selmon->tagset[selmon->seltags];
 
+  if(arg->i & ShiftLeft)
+    step = -1;
+  else
+    step = +1;
+
+  i = step;
+
 	do {
 		if(i > 0) { // left circular shift
-      if(arg->i & 4) // 3rd bit is circular yes/no
+      if(arg->i & ShiftCycle) // 3rd bit is circular yes/no
 			  nextseltags = (curseltags << i) | (curseltags >> (LENGTH(tags) - i));
       else
 			  nextseltags = curseltags << i;
     }
 		else { // right circular shift
-      if(arg->i & 4)
+      if(arg->i & ShiftCycle)
 			  nextseltags = curseltags >> (-i) | (curseltags << (LENGTH(tags) + i));
       else
         nextseltags = curseltags >> (-i);
@@ -1759,7 +1772,7 @@ shiftview(const Arg *arg)
 				visible = 1;
 				break;
 			}
-		i += 1 - (arg->i & 2);
+		i += step;
 	} while (!visible && ++count < 10);
 
 	if (count < 10) {
