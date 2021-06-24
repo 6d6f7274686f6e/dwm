@@ -1,5 +1,7 @@
 /* See LICENSE file for copyright and license details. */
 
+#include <X11/XF86keysym.h>
+
 /* appearance */
 static const unsigned int borderpx  = 2;        /* border pixel of windows */
 static const int gappx              = 15;       /* gaps between windows */
@@ -12,11 +14,13 @@ static char normbgcolor[]           = "#222222";
 static char normbordercolor[]       = "#444444";
 static char normfgcolor[]           = "#bbbbbb";
 static char selfgcolor[]            = "#eeeeee";
+static char barfgcolor[]            = "#eeeeee";
 static char selbordercolor[]        = "#005577";
 static char selbgcolor[]            = "#005577";
 static char *colors[][3] = {
        /*                    fg               bg               border   */
        [SchemeNorm]      = { normfgcolor,     normbgcolor,     normbordercolor },
+       [SchemeBar]       = { barfgcolor,      normbgcolor,     normbordercolor },
        [SchemeStackNorm] = { normfgcolor,     normbgcolor,     selbordercolor },
        [SchemeSel]       = { selfgcolor,      selbgcolor,      selbordercolor  },
        [SchemeStackSel]  = { normbgcolor,     selbordercolor,  selbordercolor  },
@@ -49,6 +53,7 @@ static const Layout layouts[] = {
 
 /* key definitions */
 #define MODKEY Mod4Mask
+#define AltMask Mod1Mask
 #define TAGKEYS(KEY,TAG) \
 	{ MODKEY,                       KEY,      view,           {.ui = 1 << TAG} }, \
 	{ MODKEY|ControlMask,           KEY,      toggleview,     {.ui = 1 << TAG} }, \
@@ -60,12 +65,39 @@ static const Layout layouts[] = {
 
 /* commands */
 static char dmenumon[2] = "0"; /* component of dmenucmd, manipulated in spawn() */
-static const char *dmenucmd[]    = { "dmenu_run", "-m", dmenumon, "-fn", dmenufont, "-nb", normbgcolor, "-nf", normfgcolor, "-sb", selbordercolor, "-sf", selfgcolor, NULL };
-static const char *termcmd[]     = { "st", NULL };
-static const char *lockcmd[]     = { "/bin/zsh", "/usr/local/bin/scripts/dwm/lock", NULL };
-static const char *runcmd[]      = { "/bin/zsh", "/usr/local/bin/scripts/dwm/run" , NULL };
-static const char *powercmd[]    = { "/bin/zsh", "/usr/local/bin/scripts/dwm/shutdown_options" , NULL };
-static const char *explorercmd[] = { "st", "-e", "ranger" , NULL };
+static const char *dmenucmd[]       = { "dmenu_run", "-m", dmenumon, "-fn", dmenufont, "-nb", normbgcolor, "-nf", normfgcolor, "-sb", selbordercolor, "-sf", selfgcolor, NULL };
+static const char *termcmd[]        = { "st", NULL };
+static const char *explorercmd[]    = { "st", "-e", "ranger" , NULL };
+static const char *kbdlightup[]     = { "brightnessctl", "-d", "asus::kbd_backlight", "set", "+1", NULL };
+static const char *kbdlightdown[]   = { "brightnessctl", "-d", "asus::kbd_backlight", "set", "1-", NULL };
+static const char *monlightup[]     = { "xbacklight", "-inc", "5", NULL };
+static const char *monlightdown[]   = { "xbacklight", "-dec", "5", NULL };
+static const char *musicnext[]      = { "mpc", "next", NULL };
+static const char *musicprev[]      = { "mpc", "prev", NULL };
+static const char *musictoggle[]    = { "mpc", "toggle", NULL };
+static const char *musicstop[]      = { "mpc", "stop", NULL };
+static const char *musicvolinc[]    = { "mpc", "volume", "+2", NULL };
+static const char *musicvoldec[]    = { "mpc", "volume", "-2", NULL };
+static const char *musicplayer[]    = { "st", "-e", "ncmpcpp", NULL };
+static const char *lowervolume[]    = { "/bin/zsh", "-c", "VOLUME_COMMAND=dec /usr/local/bin/scripts/dwm/volume" , NULL };
+static const char *raisevolume[]    = { "/bin/zsh", "-c", "VOLUME_COMMAND=inc /usr/local/bin/scripts/dwm/volume" , NULL };
+static const char *togglevolume[]   = { "/bin/zsh", "-c", "VOLUME_COMMAND=toggle /usr/local/bin/scripts/dwm/volume", NULL };
+static const char *lockcmd[]        = { "/bin/zsh", "/usr/local/bin/scripts/dwm/lock", NULL };
+static const char *runcmd[]         = { "/bin/zsh", "/usr/local/bin/scripts/dwm/run" , NULL };
+static const char *powercmd[]       = { "/bin/zsh", "/usr/local/bin/scripts/dwm/shutdown_options" , NULL };
+static const char *toggletouchpad[] = { "/bin/zsh", "/usr/local/bin/scripts/dwm/toggle_touchpad", NULL };
+static const char *getlink[]        = { "/bin/zsh", "/usr/local/bin/scripts/dwm/getlink", NULL };
+static const char *selinternet[]    = { "/bin/zsh", "/usr/local/bin/scripts/dwm/select_internet", NULL };
+static const char *selpowerplan[]   = { "/bin/zsh", "/usr/local/bin/scripts/dwm/select_powerplan", NULL };
+static const char *checkinternet[]  = { "/bin/zsh", "/usr/local/bin/scripts/dwm/check_internet", NULL };
+static const char *automount[]      = { "/bin/zsh", "/usr/local/bin/scripts/dwm/automount", NULL };
+static const char *autounmount[]    = { "/bin/zsh", "/usr/local/bin/scripts/dwm/autounmount", NULL };
+static const char *scrot[]          = { "/bin/zsh", "/usr/local/bin/scripts/dwm/scrot", "full", "toclipboard", NULL };
+static const char *scrotsel[]       = { "/bin/zsh", "/usr/local/bin/scripts/dwm/scrot", "sel",  "toclipboard", NULL };
+static const char *scrotsave[]      = { "/bin/zsh", "/usr/local/bin/scripts/dwm/scrot", "full", NULL };
+static const char *scrotselsave[]   = { "/bin/zsh", "/usr/local/bin/scripts/dwm/scrot", "sel",  NULL };
+static const char *tweet[]          = { "/bin/zsh", "/usr/local/bin/scripts/dwm/tweet",  NULL };
+static const char *themegen[]       = { "/bin/zsh", "/usr/local/bin/scripts/dwm/theme",  NULL };
 
 static Key keys[] = {
 	/* modifier                     key        function        argument */
@@ -74,6 +106,26 @@ static Key keys[] = {
 	{ MODKEY,                       XK_Return,      spawn,          {.v = termcmd } },
 	{ MODKEY,                       XK_Escape,      spawn,          {.v = lockcmd } },
 	{ MODKEY,                       XK_e,           spawn,          {.v = explorercmd } },
+	{ MODKEY,                       XK_g,           spawn,          {.v = toggletouchpad } },
+	{ MODKEY,                       XK_p,           spawn,          {.v = musictoggle } },
+	{ MODKEY,                       XK_u,           spawn,          {.v = musicvoldec } },
+	{ MODKEY,                       XK_i,           spawn,          {.v = musicvolinc } },
+	{ MODKEY,                       XK_n,           spawn,          {.v = getlink } },
+	{ MODKEY|ControlMask,           XK_p,           spawn,          {.v = musicplayer } },
+	{ MODKEY|ControlMask,           XK_t,           spawn,          {.v = tweet } },
+	{ MODKEY|ControlMask,           XK_s,           spawn,          {.v = scrot } },
+	{ MODKEY|AltMask,               XK_s,           spawn,          {.v = scrotsel } },
+	{ MODKEY|ControlMask|ShiftMask, XK_s,           spawn,          {.v = scrotsave } },
+	{ MODKEY|AltMask|ShiftMask,     XK_s,           spawn,          {.v = scrotselsave } },
+	{ MODKEY|ShiftMask,             XK_p,           spawn,          {.v = musicplayer } },
+	{ MODKEY|ShiftMask,             XK_o,           spawn,          {.v = musicnext } },
+	{ MODKEY|ShiftMask,             XK_m,           spawn,          {.v = musicstop } },
+	{ MODKEY|ShiftMask,             XK_y,           spawn,          {.v = musicprev } },
+	{ MODKEY|ShiftMask,             XK_n,           spawn,          {.v = selinternet } },
+	{ MODKEY|ShiftMask,             XK_x,           spawn,          {.v = selpowerplan } },
+	{ MODKEY|ControlMask,           XK_m,           spawn,          {.v = automount } },
+	{ MODKEY|ControlMask|ShiftMask, XK_m,           spawn,          {.v = autounmount } },
+	{ MODKEY|ControlMask|ShiftMask, XK_n,           spawn,          {.v = checkinternet } },
 	{ MODKEY,                       XK_w,           togglebar,      {0} },
  	{ MODKEY,                       XK_j,           focusstack,     {.i = +1 } },
  	{ MODKEY,                       XK_l,           focusstack,     {.i = +1 } },
@@ -83,9 +135,21 @@ static Key keys[] = {
  	{ MODKEY,                       XK_d,           focusstack,     {.i = -1 } },
  	{ MODKEY,                       XK_q,           focusstack,     {.i = -1 } },
  	{ MODKEY,                       XK_h,           focusstack,     {.i = -1 } },
-	{ MODKEY,                       XK_i,           incnmaster,     {.i = +1 } },
-	{ MODKEY,                       XK_u,           incnmaster,     {.i = -1 } },
+ 	{ MODKEY,                       XK_Left,        focusstack,     {.i = -1 } },
+ 	{ MODKEY,                       XK_Up,          focusstack,     {.i = -1 } },
+ 	{ MODKEY,                       XK_Right,       focusstack,     {.i = +1 } },
+ 	{ MODKEY,                       XK_Down,        focusstack,     {.i = +1 } },
+	{ MODKEY,                       XK_c,           incnmaster,     {.i = +1 } },
+	{ MODKEY,                       XK_v,           incnmaster,     {.i = -1 } },
 	{ MODKEY|ControlMask,           XK_h,           setmfact,       {.f = -0.01} },
+	{ MODKEY|ControlMask,           XK_Left,        setmfact,       {.f = -0.01} },
+	{ MODKEY|ControlMask,           XK_Up,          incnmaster,     {.i = +1} },
+	{ MODKEY|ControlMask,           XK_k,           incnmaster,     {.i = +1} },
+	{ MODKEY|ControlMask,           XK_d,           incnmaster,     {.i = +1} },
+	{ MODKEY|ControlMask,           XK_Down,        incnmaster,     {.i = -1} },
+	{ MODKEY|ControlMask,           XK_j,           incnmaster,     {.i = -1} },
+	{ MODKEY|ControlMask,           XK_s,           incnmaster,     {.i = -1} },
+	{ MODKEY|ControlMask,           XK_Right,       setmfact,       {.f = +0.01} },
 	{ MODKEY|ControlMask,           XK_l,           setmfact,       {.f = +0.01} },
 	{ MODKEY,                       XK_space,       zoom,           {0} },
 	{ MODKEY,                       XK_Tab,         shiftview,      {.i = ShiftCycle } },
@@ -96,11 +160,12 @@ static Key keys[] = {
 	{ MODKEY,                       XK_z,           setlayout,      {.v = &layouts[2]} },
 	{ MODKEY|ShiftMask,             XK_Return,      setlayout,      {0} },
 	{ MODKEY|ShiftMask,             XK_space,       togglefloating, {0} },
-	{ MODKEY|ControlMask,           XK_Tab,         focusmon,       {.i = +1 } },
-	{ MODKEY|ControlMask|ShiftMask, XK_Tab,         focusmon,       {.i = -1 } },
-//	{ MODKEY|ControlMask|ShiftMask, XK_Tab,         tagmon,         {.i = -1 } },
-//	{ MODKEY|ControlMask|ShiftMask, XK_Tab,         tagmon,         {.i = +1 } },
+	{ MODKEY|AltMask,               XK_Tab,         focusmon,       {.i = +1 } },
+	{ MODKEY|AltMask|ShiftMask,     XK_Tab,         focusmon,       {.i = -1 } },
+	{ MODKEY|ControlMask,           XK_Tab,         tagmon,         {.i = +1 } },
+	{ MODKEY|ControlMask|ShiftMask, XK_Tab,         tagmon,         {.i = -1 } },
 	{ MODKEY,                       XK_F5,          xrdb,           {.v = NULL } },
+	{ MODKEY,                       XK_F5,          spawn,          {.v = themegen } },
  	{ MODKEY,                       XK_KP_Subtract, setgaps,        {.i = -5 } },
  	{ MODKEY,                       XK_KP_Add,      setgaps,        {.i = +5 } },
  	{ MODKEY|ShiftMask,             XK_equal,       setgaps,        {.i = 0  } },
@@ -114,6 +179,14 @@ static Key keys[] = {
 	TAGKEYS(                        XK_underscore,                  7)
 	TAGKEYS(                        XK_ccedilla,                    8)
 	TAGKEYS(                        XK_agrave,                      9)
+  {0, XF86XK_AudioRaiseVolume,  spawn, {.v = raisevolume } },
+  {0, XF86XK_AudioLowerVolume,  spawn, {.v = lowervolume } },
+  {0, XF86XK_AudioMute,         spawn, {.v = togglevolume } },
+  {0, XF86XK_MonBrightnessUp,   spawn, {.v = monlightup } },
+  {0, XF86XK_KbdBrightnessUp,   spawn, {.v = kbdlightup } },
+  {0, XF86XK_MonBrightnessDown, spawn, {.v = monlightdown } },
+  {0, XF86XK_KbdBrightnessDown, spawn, {.v = kbdlightdown } },
+  {0, XF86XK_TouchpadToggle,    spawn, {.v = toggletouchpad } },
 };
 
 /* button definitions */
