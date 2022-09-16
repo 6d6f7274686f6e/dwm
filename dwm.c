@@ -517,8 +517,8 @@ buttonpress(XEvent *e)
 			}
     }
  		else {
+      x = TEXTW(selmon->ltsymbol);
  			c = m->clients;
- 
  			if (c) {
  				do {
  					if (!ISVISIBLE(c))
