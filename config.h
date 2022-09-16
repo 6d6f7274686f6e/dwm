@@ -100,6 +100,8 @@ static const char *scrotsave[]      = { "/bin/zsh", "/usr/local/bin/scripts/dwm/
 static const char *scrotselsave[]   = { "/bin/zsh", "/usr/local/bin/scripts/dwm/scrot", "sel",  NULL };
 static const char *tweet[]          = { "/bin/zsh", "/usr/local/bin/scripts/dwm/tweet",  NULL };
 static const char *themegen[]       = { "/bin/zsh", "/usr/local/bin/scripts/dwm/theme",  NULL };
+static const char scratchpadname[]  = "scratchpad";
+static const char *scratchpadcmd[]  = { "st", "-t", scratchpadname, "-g", "120x34", NULL };
 
 static Key keys[] = {
 	/* modifier                     key        function        argument */
@@ -171,6 +173,7 @@ static Key keys[] = {
  	{ MODKEY,                       XK_KP_Subtract, setgaps,        {.i = -5 } },
  	{ MODKEY,                       XK_KP_Add,      setgaps,        {.i = +5 } },
  	{ MODKEY|ShiftMask,             XK_equal,       setgaps,        {.i = 0  } },
+	{ MODKEY,                       XK_twosuperior, togglescratch,  {.v = scratchpadcmd } },
 	TAGKEYS(                        XK_ampersand,                   0)
 	TAGKEYS(                        XK_eacute,                      1)
 	TAGKEYS(                        XK_quotedbl,                    2)
