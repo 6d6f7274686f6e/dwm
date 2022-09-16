@@ -64,6 +64,8 @@ static const Layout layouts[] = {
 /* helper for spawning shell commands in the pre dwm-5.0 fashion */
 #define SHCMD(cmd) { .v = (const char*[]){ "/bin/zsh", "-c", cmd, NULL } }
 
+#define STATUSBAR "dwmblocks"
+
 /* commands */
 static const char *dmenucmd[]       = { "dmenu_run", "-fn", dmenufont, "-nb", normbgcolor, "-nf", normfgcolor, "-sb", selbordercolor, "-sf", selfgcolor, NULL };
 static const char *termcmd[]        = { "st", NULL };
@@ -72,13 +74,13 @@ static const char *kbdlightup[]     = { "brightnessctl", "-d", "asus::kbd_backli
 static const char *kbdlightdown[]   = { "brightnessctl", "-d", "asus::kbd_backlight", "set", "1-", NULL };
 static const char *monlightup[]     = { "xbacklight", "-inc", "5", NULL };
 static const char *monlightdown[]   = { "xbacklight", "-dec", "5", NULL };
-static const char *musicnext[]      = { "mpc", "next", NULL };
-static const char *musicprev[]      = { "mpc", "prev", NULL };
-static const char *musictoggle[]    = { "mpc", "toggle", NULL };
-static const char *musicstop[]      = { "mpc", "stop", NULL };
-static const char *musicvolinc[]    = { "mpc", "volume", "+2", NULL };
-static const char *musicvoldec[]    = { "mpc", "volume", "-2", NULL };
 static const char *musicplayer[]    = { "st", "-e", "ncmpcpp", NULL };
+static const char *musicnext[]      = { "/bin/zsh", "-c", "MUSIC_COMMAND=next   /usr/local/bin/scripts/dwm/music", NULL };
+static const char *musicprev[]      = { "/bin/zsh", "-c", "MUSIC_COMMAND=prev   /usr/local/bin/scripts/dwm/music", NULL };
+static const char *musictoggle[]    = { "/bin/zsh", "-c", "MUSIC_COMMAND=toggle /usr/local/bin/scripts/dwm/music", NULL };
+static const char *musicstop[]      = { "/bin/zsh", "-c", "MUSIC_COMMAND=stop   /usr/local/bin/scripts/dwm/music", NULL };
+static const char *musicvolinc[]    = { "/bin/zsh", "-c", "MUSIC_COMMAND=volinc /usr/local/bin/scripts/dwm/music", NULL };
+static const char *musicvoldec[]    = { "/bin/zsh", "-c", "MUSIC_COMMAND=voldec /usr/local/bin/scripts/dwm/music", NULL };
 static const char *lowervolume[]    = { "/bin/zsh", "-c", "VOLUME_COMMAND=dec /usr/local/bin/scripts/dwm/volume" , NULL };
 static const char *raisevolume[]    = { "/bin/zsh", "-c", "VOLUME_COMMAND=inc /usr/local/bin/scripts/dwm/volume" , NULL };
 static const char *togglevolume[]   = { "/bin/zsh", "-c", "VOLUME_COMMAND=toggle /usr/local/bin/scripts/dwm/volume", NULL };
@@ -200,7 +202,6 @@ static Button buttons[] = {
  	{ ClkWinTitle,          0,                Button4,        focusstack,     {.i = -1 } },
 	{ ClkWinTitle,          0,                Button2,        togglewin,      {0} },
 	{ ClkWinTitle,          0,                Button2,        killclient,     {0} },
-	{ ClkStatusText,        0,                Button2,        spawn,          {.v = termcmd } },
 	{ ClkClientWin,         MODKEY,           Button1,        movemouse,      {0} },
 	{ ClkClientWin,         MODKEY,           Button2,        killclient,     {0} },
 	{ ClkClientWin,         MODKEY,           Button3,        resizemouse,    {0} },
@@ -211,4 +212,9 @@ static Button buttons[] = {
 	{ ClkTagBar,            MODKEY,           Button3,        toggletag,      {0} },
 	{ ClkTagBar,            0,                Button5,        shiftview,      {.i = ShiftNoCycle } },
 	{ ClkTagBar,            0,                Button4,        shiftview,      {.i = ShiftNoCycle | ShiftLeft } },
+	{ ClkStatusText,        0,                Button1,        sigdwmblocks,   {.i = 1 } },
+	{ ClkStatusText,        0,                Button2,        sigdwmblocks,   {.i = 2 } },
+	{ ClkStatusText,        0,                Button3,        sigdwmblocks,   {.i = 3 } },
+	{ ClkStatusText,        0,                Button4,        sigdwmblocks,   {.i = 4 } },
+	{ ClkStatusText,        0,                Button5,        sigdwmblocks,   {.i = 5 } },
 };
