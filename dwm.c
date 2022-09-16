@@ -504,7 +504,7 @@ buttonpress(XEvent *e)
 			char ch;
 			dwmblockssig = 0;
 			while (text[++i]) {
-				if ((unsigned char)text[i] < 17 && (unsigned char)text[i] > 10) {
+				if ((unsigned char)text[i] <= dwmblockssigmax && (unsigned char)text[i] >= dwmblockssigmin) { 
 					ch = text[i];
 					text[i] = '\0';
 					x += TEXTW(text) - lrpad;
