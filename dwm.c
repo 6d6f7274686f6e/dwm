@@ -497,14 +497,14 @@ buttonpress(XEvent *e)
 		} else if (ev->x < x + TEXTW(selmon->ltsymbol))
 			click = ClkLtSymbol;
  		/* 2px right padding */
-		else if (ev->x > (x = selmon->ww - TEXTW(stext) + lrpad - 2)) {
+		else if (ev->x > (x = selmon->ww - TEXTW(stext) + lrpad)) {
  			click = ClkStatusText;
 			char *text = rawstext;
 			int i = -1;
 			char ch;
 			dwmblockssig = 0;
 			while (text[++i]) {
-				if ((unsigned char)text[i] <= dwmblockssigmax && (unsigned char)text[i] >= dwmblockssigmin) { 
+				if ((unsigned char)text[i] < ' ') { 
 					ch = text[i];
 					text[i] = '\0';
 					x += TEXTW(text) - lrpad;
