@@ -9,7 +9,6 @@ static const unsigned int snap      = 32;       /* snap pixel */
 static const int showbar            = 1;        /* 0 means no bar */
 static const int topbar             = 1;        /* 0 means bottom bar */
 static const char *fonts[]          = { "Literation Mono Nerd Font:pixelsize=15:antialias=true:autohint=true" };
-static const char dmenufont[]       = "Literation Mono Nerd Font:pixelsize=15:antialias=true:autohint=true";
 static char normbgcolor[]           = "#222222";
 static char normbordercolor[]       = "#444444";
 static char normfgcolor[]           = "#bbbbbb";
@@ -27,8 +26,9 @@ static char *colors[][3] = {
 };
 
 /* tagging */
-static const char *alttags[] = { "", "", "", "", "♫", "", "", "", "", "" };
-static const char *tags[]    = { "1", "2", "3", "4", "5", "6", "7", "8", "9", "0" };
+static const char *tags[] = { "  ", "  ", "  ", "  ", "  ", "  ", "  ", "  ", "  ", "  " };
+static const char *alttags[]    = { "1", "2", "3", "4", "5", "6", "7", "8", "9", "0" };
+static const int momentaryalttags = 1; /* 1 means alttags will show only when key is held down*/
 
 static const Rule rules[] = {
 	/* xprop(1):
@@ -67,7 +67,6 @@ static const Layout layouts[] = {
 #define STATUSBAR "dwmblocks"
 
 /* commands */
-static const char *dmenucmd[]       = { "dmenu_run", "-fn", dmenufont, "-nb", normbgcolor, "-nf", normfgcolor, "-sb", selbordercolor, "-sf", selfgcolor, NULL };
 static const char *termcmd[]        = { "st", NULL };
 static const char *explorercmd[]    = { "st", "-e", "lfub" , NULL };
 static const char *kbdlightup[]     = { "brightnessctl", "-d", "asus::kbd_backlight", "set", "+1", NULL };
@@ -192,6 +191,7 @@ static Key keys[] = {
   {0, XF86XK_MonBrightnessDown, spawn, {.v = monlightdown } },
   {0, XF86XK_KbdBrightnessDown, spawn, {.v = kbdlightdown } },
   {0, XF86XK_TouchpadToggle,    spawn, {.v = toggletouchpad } },
+	{0, XK_Super_L, togglealttag, {0} },
 };
 
 /* button definitions */
