@@ -1852,6 +1852,7 @@ shiftview(const Arg *arg)
   int i, step;
 	int count = 0;
 	int nextseltags, curseltags = selmon->tagset[selmon->seltags];
+  curseltags &= -curseltags; // keep only first selected tag
 
   if(arg->i & ShiftLeft)
     step = -1;
@@ -1875,15 +1876,17 @@ shiftview(const Arg *arg)
     }
     // Check if tag is visible
 		for (c = selmon->clients; c && !visible; c = c->next)
-			if (nextseltags & c->tags) {
+			if (nextseltags & c->tags & ~scratchtag) {
 				visible = 1;
 				break;
 			}
 		i += step;
-	} while (!visible && ++count < 10);
+	} while (!visible && ++count < LENGTH(tags));
 
-	if (count < 10) {
-		a.i = nextseltags;
+	if (count < LENGTH(tags)) {
+    // if multiple tags were selected, keep only the rightmost one
+    // i.e. move to a tag next to the first selected tag
+		a.i = nextseltags; 
 		view(&a);
 	}
 }
