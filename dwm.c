@@ -503,8 +503,8 @@ buttonpress(XEvent *e)
 			arg.ui = 1 << i;
 		} else if (ev->x < x + TEXTW(selmon->ltsymbol))
 			click = ClkLtSymbol;
- 		/* 2px right padding */
-		else if (ev->x > (x = selmon->ww - TEXTW(stext) + lrpad)) {
+		else if (ev->x > (selmon->ww - TEXTW(stext) + lrpad)) {
+      x = selmon->ww - TEXTW(stext) + lrpad;
  			click = ClkStatusText;
 			char *text = rawstext;
 			int i = -1;
@@ -524,7 +524,7 @@ buttonpress(XEvent *e)
 			}
     }
  		else {
-      x = TEXTW(selmon->ltsymbol);
+      x += TEXTW(selmon->ltsymbol);
  			c = m->clients;
  			if (c) {
  				do {
