@@ -99,7 +99,7 @@ static const char *scrotsave[]      = { "/bin/zsh", "/usr/local/bin/scripts/dwm/
 static const char *scrotselsave[]   = { "/bin/zsh", "/usr/local/bin/scripts/dwm/scrot", "sel",  NULL };
 static const char *tweet[]          = { "/bin/zsh", "/usr/local/bin/scripts/dwm/tweet",  NULL };
 static const char *themegen[]       = { "/bin/zsh", "/usr/local/bin/scripts/dwm/theme",  NULL };
-static const char scratchpadname[]  = "scratchpad";
+static const char scratchpadname[]  = "dwm_scratchpad";
 static const char *scratchpadcmd[]  = { "st", "-t", scratchpadname, "-g", "120x34", NULL };
 
 static Key keys[] = {
