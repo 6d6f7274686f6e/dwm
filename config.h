@@ -26,7 +26,8 @@ static char *colors[][3] = {
 };
 
 /* tagging */
-static const char *tags[] = { "  ", "  ", "  ", "  ", "  ", "  ", "  ", "  ", "  ", "  " };
+// NB : use of "small" spaces (' ') below, not "real" spaces.
+static const char *tags[] = { "  ","  ","  ","  ","  ","  ","  ","  ","  ","  "};
 static const char *alttags[]    = { "1", "2", "3", "4", "5", "6", "7", "8", "9", "0" };
 static const int momentaryalttags = 1; /* 1 means alttags will show only when key is held down*/
 
@@ -47,9 +48,9 @@ static const int lockfullscreen = 1; /* 1 will force focus on the fullscreen win
 
 static const Layout layouts[] = {
 	/* symbol     arrange function */
-	{ "[]=",      tile },    /* first entry is default */
-	{ "><>",      NULL },    /* no layout function means floating behavior */
-	{ "[M]",      monocle },
+	{ "[M]",      monocle }, /* first entry is default */
+	{ "[]=",      tile },
+  { "><>",      NULL },    /* no layout function means floating behavior */
 };
 
 /* key definitions */
@@ -71,9 +72,10 @@ static const char *termcmd[]        = { "st", NULL };
 static const char *explorercmd[]    = { "st", "-e", "lfub" , NULL };
 static const char *kbdlightup[]     = { "brightnessctl", "-d", "asus::kbd_backlight", "set", "+1", NULL };
 static const char *kbdlightdown[]   = { "brightnessctl", "-d", "asus::kbd_backlight", "set", "1-", NULL };
-static const char *monlightup[]     = { "xbacklight", "-inc", "5", NULL };
-static const char *monlightdown[]   = { "xbacklight", "-dec", "5", NULL };
+static const char *monlightup[]     = { "/bin/zsh", "/usr/local/bin/scripts/dwm/backlight", "Up", NULL };
+static const char *monlightdown[]   = { "/bin/zsh", "/usr/local/bin/scripts/dwm/backlight", "Down", NULL };
 static const char *musicplayer[]    = { "st", "-e", "ncmpcpp", NULL };
+static const char *discord[]        = { "discord", "--enable-blink-features=MiddleClickAutoscroll", NULL };
 static const char *musicnext[]      = { "/bin/zsh", "-c", "MUSIC_COMMAND=next   /usr/local/bin/scripts/dwm/music", NULL };
 static const char *musicprev[]      = { "/bin/zsh", "-c", "MUSIC_COMMAND=prev   /usr/local/bin/scripts/dwm/music", NULL };
 static const char *musictoggle[]    = { "/bin/zsh", "-c", "MUSIC_COMMAND=toggle /usr/local/bin/scripts/dwm/music", NULL };
@@ -97,8 +99,14 @@ static const char *scrot[]          = { "/bin/zsh", "/usr/local/bin/scripts/dwm/
 static const char *scrotsel[]       = { "/bin/zsh", "/usr/local/bin/scripts/dwm/scrot", "sel",  "toclipboard", NULL };
 static const char *scrotsave[]      = { "/bin/zsh", "/usr/local/bin/scripts/dwm/scrot", "full", NULL };
 static const char *scrotselsave[]   = { "/bin/zsh", "/usr/local/bin/scripts/dwm/scrot", "sel",  NULL };
-static const char *tweet[]          = { "/bin/zsh", "/usr/local/bin/scripts/dwm/tweet",  NULL };
-static const char *themegen[]       = { "/bin/zsh", "/usr/local/bin/scripts/dwm/theme",  NULL };
+static const char *tweet[]          = { "/bin/zsh", "/usr/local/bin/scripts/dwm/tweet", NULL };
+static const char *themegen[]       = { "/bin/zsh", "/usr/local/bin/scripts/dwm/theme", NULL };
+static const char *xkill[]          = { "/bin/zsh", "/usr/local/bin/scripts/dwm/xkill", NULL };
+static const char *startmovies[]    = { "/bin/zsh", "/usr/local/bin/scripts/dwm/movies", NULL };
+static const char *startanimes[]    = { "/bin/zsh", "/usr/local/bin/scripts/dwm/animes", NULL };
+static const char *continuemovies[] = { "/bin/zsh", "/usr/local/bin/scripts/dwm/movies", "continue", NULL };
+static const char *continueanimes[] = { "/bin/zsh", "/usr/local/bin/scripts/dwm/animes", "continue", NULL };
+static const char *clearclipboard[] = { "/bin/zsh", "xclip -i < /dev/null", NULL };
 static const char scratchpadname[]  = "dwm_scratchpad";
 static const char *scratchpadcmd[]  = { "st", "-t", scratchpadname, "-g", "120x34", NULL };
 
@@ -115,6 +123,7 @@ static Key keys[] = {
 	{ MODKEY,                       XK_i,           spawn,          {.v = musicvolinc } },
 	{ MODKEY,                       XK_n,           spawn,          {.v = getlink } },
 	{ MODKEY|ControlMask,           XK_p,           spawn,          {.v = musicplayer } },
+	{ MODKEY|ShiftMask,             XK_d,           spawn,          {.v = discord } },
 	{ MODKEY|ControlMask,           XK_t,           spawn,          {.v = tweet } },
 	{ MODKEY|ControlMask,           XK_s,           spawn,          {.v = scrot } },
 	{ MODKEY|AltMask,               XK_s,           spawn,          {.v = scrotsel } },
@@ -159,17 +168,23 @@ static Key keys[] = {
 	{ MODKEY,                       XK_Tab,         shiftview,      {.i = ShiftCycle } },
 	{ MODKEY|ShiftMask,             XK_Tab,         shiftview,      {.i = ShiftCycle | ShiftLeft } },
 	{ MODKEY|ShiftMask,             XK_a,           killclient,     {0} },
-	{ MODKEY,                       XK_t,           setlayout,      {.v = &layouts[0]} },
-	{ MODKEY,                       XK_x,           setlayout,      {.v = &layouts[1]} },
-	{ MODKEY,                       XK_z,           setlayout,      {.v = &layouts[2]} },
+	{ MODKEY,                       XK_t,           setlayout,      {.v = &layouts[1]} },
+	{ MODKEY,                       XK_x,           setlayout,      {.v = &layouts[2]} },
+	{ MODKEY,                       XK_z,           setlayout,      {.v = &layouts[0]} },
 	{ MODKEY|ShiftMask,             XK_Return,      setlayout,      {0} },
 	{ MODKEY|ShiftMask,             XK_space,       togglefloating, {0} },
-	{ MODKEY|AltMask,               XK_Tab,         focusmon,       {.i = +1 } },
-	{ MODKEY|AltMask|ShiftMask,     XK_Tab,         focusmon,       {.i = -1 } },
-	{ MODKEY|ControlMask,           XK_Tab,         tagmon,         {.i = +1 } },
-	{ MODKEY|ControlMask|ShiftMask, XK_Tab,         tagmon,         {.i = -1 } },
+	{ MODKEY|AltMask,               XK_Tab,         tagmon,         {.i = +1 } },
+	{ MODKEY|AltMask|ShiftMask,     XK_Tab,         tagmon,         {.i = -1 } },
+	{ MODKEY|ControlMask,           XK_Tab,         focusmon,       {.i = +1 } },
+	{ MODKEY|ControlMask|ShiftMask, XK_Tab,         focusmon,       {.i = -1 } },
+	{ MODKEY|ShiftMask,             XK_F1,          spawn,          {.v = clearclipboard } },
 	{ MODKEY,                       XK_F5,          xrdb,           {.v = NULL } },
-	{ MODKEY,                       XK_F5,          spawn,          {.v = themegen } },
+	{ MODKEY|ShiftMask,             XK_F5,          spawn,          {.v = themegen } },
+	{ MODKEY,                       XK_F8,          spawn,          {.v = startmovies } },
+	{ MODKEY,                       XK_F7,          spawn,          {.v = startanimes } },
+	{ MODKEY|ShiftMask,             XK_F8,          spawn,          {.v = continuemovies } },
+	{ MODKEY|ShiftMask,             XK_F7,          spawn,          {.v = continueanimes } },
+	{ MODKEY,                       XK_F9,          spawn,          {.v = xkill } },
  	{ MODKEY,                       XK_KP_Subtract, setgaps,        {.i = -5 } },
  	{ MODKEY,                       XK_KP_Add,      setgaps,        {.i = +5 } },
  	{ MODKEY|ShiftMask,             XK_equal,       setgaps,        {.i = 0  } },
@@ -200,12 +215,15 @@ static Key keys[] = {
 static Button buttons[] = {
 	/* click                event mask      button          function        argument */
 	{ ClkLtSymbol,          0,                Button1,        setlayout,       {0} },
-	{ ClkLtSymbol,          0,                Button3,        setlayout,       {.v = &layouts[2]} },
+	{ ClkLtSymbol,          0,                Button2,        spawn,           {.v = runcmd} },
+	{ ClkLtSymbol,          0,                Button3,        togglefloating,  {0} },
 	{ ClkWinTitle,          0,                Button1,        togglewin,       {0} },
  	{ ClkWinTitle,          0,                Button5,        focusstackbound, {.i = +1 } },
  	{ ClkWinTitle,          0,                Button4,        focusstackbound, {.i = -1 } },
 	{ ClkWinTitle,          0,                Button2,        togglewin,       {0} },
 	{ ClkWinTitle,          0,                Button2,        killclient,      {0} },
+  { ClkWinTitle,          0,                Button3,        togglewin,       {0} },
+	{ ClkWinTitle,          0,                Button3,        zoom,            {0} },
 	{ ClkClientWin,         MODKEY,           Button1,        movemouse,       {0} },
 	{ ClkClientWin,         MODKEY,           Button2,        killclient,      {0} },
 	{ ClkClientWin,         MODKEY,           Button3,        resizemouse,     {0} },

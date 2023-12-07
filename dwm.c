@@ -826,11 +826,9 @@ drawbar(Monitor *m)
 		return;
 
 	/* draw status first so it can be overdrawn by tags later */
-	if (m == selmon) { /* status is only drawn on selected monitor */
-		drw_setscheme(drw, scheme[SchemeBar]);
-		tw = TEXTW(stext) - lrpad + 2; /* 2px right padding */
-		drw_text(drw, m->ww - tw, 0, tw, bh, 0, stext, 0);
-	}
+	drw_setscheme(drw, scheme[SchemeBar]);
+	tw = TEXTW(stext) - lrpad + 2; /* 2px right padding */
+	drw_text(drw, m->ww - tw, 0, tw, bh, 0, stext, 0);
 
 	for (c = m->clients; c; c = c->next) {
 		if (ISVISIBLE(c))
@@ -1213,7 +1211,7 @@ loadxrdb()
       xrdb = XrmGetStringDatabase(resm);
 
       if (xrdb != NULL) {
-        XRDB_LOAD_COLOR("dwm.color3", normbordercolor);
+        XRDB_LOAD_COLOR("dwm.color0", normbordercolor);
         XRDB_LOAD_COLOR("dwm.color0", normbgcolor);
         XRDB_LOAD_COLOR("dwm.color4", normfgcolor);
         XRDB_LOAD_COLOR("dwm.color4", selbordercolor);
@@ -2348,7 +2346,7 @@ updatestatus(void)
 		strcpy(stext, "dwm-"VERSION);
 	else
 		copyvalidchars(stext, rawstext);
-	drawbar(selmon);
+	drawbars();
 }
 
 void
