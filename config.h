@@ -70,11 +70,13 @@ static const Layout layouts[] = {
 /* commands */
 static const char *termcmd[]        = { "st", NULL };
 static const char *explorercmd[]    = { "st", "-e", "lfub" , NULL };
-static const char *kbdlightup[]     = { "brightnessctl", "-d", "asus::kbd_backlight", "set", "+1", NULL };
-static const char *kbdlightdown[]   = { "brightnessctl", "-d", "asus::kbd_backlight", "set", "1-", NULL };
+static const char *kbdlightup[]     = { "brightnessctl", "-d", "dell::kbd_backlight", "set", "+1", NULL };
+static const char *kbdlightdown[]   = { "brightnessctl", "-d", "dell::kbd_backlight", "set", "1-", NULL };
 static const char *monlightup[]     = { "/bin/zsh", "/usr/local/bin/scripts/dwm/backlight", "Up", NULL };
 static const char *monlightdown[]   = { "/bin/zsh", "/usr/local/bin/scripts/dwm/backlight", "Down", NULL };
+// static const char *musicplayer[]    = { "surf", "http://pc-jng:4533", NULL };
 static const char *musicplayer[]    = { "st", "-e", "ncmpcpp", NULL };
+//static const char *fileclient[]     = { "firefox-esr", "-P 6d", "http://pc-jng-local:4554", NULL };
 static const char *discord[]        = { "discord", "--enable-blink-features=MiddleClickAutoscroll", NULL };
 static const char *musicnext[]      = { "/bin/zsh", "-c", "MUSIC_COMMAND=next   /usr/local/bin/scripts/dwm/music", NULL };
 static const char *musicprev[]      = { "/bin/zsh", "-c", "MUSIC_COMMAND=prev   /usr/local/bin/scripts/dwm/music", NULL };
@@ -85,6 +87,7 @@ static const char *musicvoldec[]    = { "/bin/zsh", "-c", "MUSIC_COMMAND=voldec 
 static const char *lowervolume[]    = { "/bin/zsh", "-c", "VOLUME_COMMAND=dec /usr/local/bin/scripts/dwm/volume" , NULL };
 static const char *raisevolume[]    = { "/bin/zsh", "-c", "VOLUME_COMMAND=inc /usr/local/bin/scripts/dwm/volume" , NULL };
 static const char *togglevolume[]   = { "/bin/zsh", "-c", "VOLUME_COMMAND=toggle /usr/local/bin/scripts/dwm/volume", NULL };
+static const char *togglemic[]      = { "/bin/zsh", "-c", "VOLUME_COMMAND=mic_toggle /usr/local/bin/scripts/dwm/volume", NULL };
 static const char *lockcmd[]        = { "/bin/zsh", "/usr/local/bin/scripts/dwm/lock", NULL };
 static const char *runcmd[]         = { "/bin/zsh", "/usr/local/bin/scripts/dwm/run" , NULL };
 static const char *powercmd[]       = { "/bin/zsh", "/usr/local/bin/scripts/dwm/shutdown_options" , NULL };
@@ -106,7 +109,8 @@ static const char *startmovies[]    = { "/bin/zsh", "/usr/local/bin/scripts/dwm/
 static const char *startanimes[]    = { "/bin/zsh", "/usr/local/bin/scripts/dwm/animes", NULL };
 static const char *continuemovies[] = { "/bin/zsh", "/usr/local/bin/scripts/dwm/movies", "continue", NULL };
 static const char *continueanimes[] = { "/bin/zsh", "/usr/local/bin/scripts/dwm/animes", "continue", NULL };
-static const char *clearclipboard[] = { "/bin/zsh", "xclip -i < /dev/null", NULL };
+static const char *todolistcmd[]    = { "/bin/zsh", "/usr/local/bin/scripts/dwm/tasklist", NULL };
+static const char *clearclipboard[] = { "xclip", "-i", "/dev/null", NULL };
 static const char scratchpadname[]  = "dwm_scratchpad";
 static const char *scratchpadcmd[]  = { "st", "-t", scratchpadname, "-g", "120x34", NULL };
 
@@ -117,6 +121,7 @@ static Key keys[] = {
 	{ MODKEY,                       XK_Return,      spawn,          {.v = termcmd } },
 	{ MODKEY,                       XK_Escape,      spawn,          {.v = lockcmd } },
 	{ MODKEY,                       XK_e,           spawn,          {.v = explorercmd } },
+	//{ MODKEY|ShiftMask,             XK_e,           spawn,          {.v = fileclient } },
 	{ MODKEY,                       XK_g,           spawn,          {.v = toggletouchpad } },
 	{ MODKEY,                       XK_p,           spawn,          {.v = musictoggle } },
 	{ MODKEY,                       XK_u,           spawn,          {.v = musicvoldec } },
@@ -188,6 +193,7 @@ static Key keys[] = {
  	{ MODKEY,                       XK_KP_Subtract, setgaps,        {.i = -5 } },
  	{ MODKEY,                       XK_KP_Add,      setgaps,        {.i = +5 } },
  	{ MODKEY|ShiftMask,             XK_equal,       setgaps,        {.i = 0  } },
+	{ MODKEY,                       XK_equal,       spawn,          {.v = todolistcmd } },
 	{ MODKEY,                       XK_twosuperior, togglescratch,  {.v = scratchpadcmd } },
 	TAGKEYS(                        XK_ampersand,                   0)
 	TAGKEYS(                        XK_eacute,                      1)
@@ -202,6 +208,7 @@ static Key keys[] = {
   {0, XF86XK_AudioRaiseVolume,  spawn, {.v = raisevolume } },
   {0, XF86XK_AudioLowerVolume,  spawn, {.v = lowervolume } },
   {0, XF86XK_AudioMute,         spawn, {.v = togglevolume } },
+  {0, XF86XK_AudioMicMute,      spawn, {.v = togglemic } },
   {0, XF86XK_MonBrightnessUp,   spawn, {.v = monlightup } },
   {0, XF86XK_KbdBrightnessUp,   spawn, {.v = kbdlightup } },
   {0, XF86XK_MonBrightnessDown, spawn, {.v = monlightdown } },
