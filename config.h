@@ -76,6 +76,7 @@ static const char *monlightup[]     = { "/bin/zsh", "/usr/local/bin/scripts/dwm/
 static const char *monlightdown[]   = { "/bin/zsh", "/usr/local/bin/scripts/dwm/backlight", "Down", NULL };
 // static const char *musicplayer[]    = { "surf", "http://pc-jng:4533", NULL };
 static const char *musicplayer[]    = { "st", "-e", "ncmpcpp", NULL };
+static const char *bluetooth[]      = { "st", "-e", "btui", NULL };
 //static const char *fileclient[]     = { "firefox-esr", "-P 6d", "http://pc-jng-local:4554", NULL };
 static const char *discord[]        = { "discord", "--enable-blink-features=MiddleClickAutoscroll", NULL };
 static const char *musicnext[]      = { "/bin/zsh", "-c", "MUSIC_COMMAND=next   /usr/local/bin/scripts/dwm/music", NULL };
@@ -144,6 +145,7 @@ static Key keys[] = {
 	{ MODKEY|ControlMask|ShiftMask, XK_m,           spawn,          {.v = autounmount } },
 	{ MODKEY|ControlMask|ShiftMask, XK_n,           spawn,          {.v = checkinternet } },
 	{ MODKEY,                       XK_b,           togglebar,      {0} },
+	{ MODKEY|ShiftMask,             XK_b,           spawn,          {.v = bluetooth } },
 	{ MODKEY,                       XK_w,           togglefullscr,  {0} },
  	{ MODKEY,                       XK_j,           focusstack,     {.i = +1 } },
  	{ MODKEY,                       XK_l,           focusstack,     {.i = +1 } },
